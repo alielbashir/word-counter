@@ -4,12 +4,9 @@
 #include <string.h>
 
 // TODO:
-//    1. bagli liste struct'ini hazirla
-//    2. metni_oku() fonksiyonu yaz. metnini okuyup bagli listeye koyuyor
-//    3. arayip_ekle() fonksiyonu yaz
-//    4. basa_ekle() fonksiyonu yaz
-//    5. araya_ekle() fonksiyonu yaz
-//    6. sona_ekle() fonksiyonu yaz
+//    1. arayip_ekle() fonksiyonu yaz
+//    2. basa_ekle() fonksiyonu yaz
+//    3. araya_ekle() fonksiyonu yaz
 struct List {
     char *word;
     int count;
