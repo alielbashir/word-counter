@@ -3,7 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+// TODO:
+//    1. bagli liste struct'ini hazirla
+//    2. metni_oku() fonksiyonu yaz. metnini okuyup bagli listeye koyuyor
+//    3. arayip_ekle() fonksiyonu yaz
+//    4. basa_ekle() fonksiyonu yaz
+//    5. araya_ekle() fonksiyonu yaz
+//    6. sona_ekle() fonksiyonu yaz
 struct List {
     char *word;
     struct List *next;
