@@ -12,15 +12,19 @@
 //    6. sona_ekle() fonksiyonu yaz
 struct List {
     char *word;
-    struct List *next;
+    int count;
+    struct List *next,*prev;
+
 };
 typedef struct List Node;
 Node *head;
+
 
 void append(char *word) {
     head->word = word;
     Node *tmp = (Node *) malloc(sizeof(Node));
     tmp->next = NULL;
+    tmp->prev=head;
     head->next = tmp;
     printf("Added : %s\n", head->word);
     head = head->next;
@@ -36,7 +40,7 @@ void readToList(char *line) {
 }
 
 int main() {
-
+    Node * iter;
     head = (Node *) malloc(sizeof(Node));
     head->next = NULL;
     head = head;
