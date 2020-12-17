@@ -62,6 +62,8 @@ void addToEnd(const char *word) {
 }
 
 void add(const char *word) {
+    // TODO: clean up logic
+
     // handling for 1st node
     Node *node = head;
     if (node->word == NULL) {
@@ -69,14 +71,16 @@ void add(const char *word) {
         return;
     }
     // linear search for word
-    // FIXME: adds 1st element twice
-    while (node != NULL && node != node->next) {
+    while (node != NULL) {
         if (strcmp(node->word, word) == 0) {
             // increment word count
             node->count++;
             printf("incremented : %s\n", node->word);
 //         addToMiddle(word, node);
          return;
+        }
+        if (node == node->next) {
+            break;
         }
         node = node->next;
     }
