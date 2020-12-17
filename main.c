@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // TODO:
-//    1. arayip_ekle() fonksiyonu yaz
-//    2. araya_ekle() fonksiyonu yaz
+//  1. add real-time sorting
+//  2. add add to middle function
+//  3. free all resources
 struct List {
     char *word;
     int count;
@@ -24,33 +26,34 @@ Node *getNode() {
     return node;
 }
 
-//void addToMiddle(char *word, Node *node) {
-//
-//    // create node and populate it
-//    Node *newNode = getNode();
-//    newNode->word = word;
-//    newNode->count++;
-//
-//}
+void addToMiddle(const char *word, Node *node) {
 
+    // create node and populate it
+    Node *newNode = getNode();
+    newNode->word = word;
+    newNode->count++;
 
+}
+
+void addToBeginning(const char *word) {
+
+    // allocate space for word and copy it
+    head->word = malloc(strlen(word) + 1);
+    strcpy(head->word, word);
+    // increment count and add tail pointer
+    head->count++;
+    head->next = tail;
+    printf("Added : %s\n", head->word);
+}
 
 void addToEnd(const char *word) {
-    // handling for 1st node
-    if (head->word == NULL) {
-        // allocate space for word and copy it
-        head->word = malloc(strlen(word) + 1);
-        strcpy(head->word, word);
-        // increment count and add tail pointer
-        head->count++;
-        head->next = tail;
-    }
+
     // create and populate new node
     Node *node = getNode();
     node->word = malloc(strlen(word) + 1);
     strcpy(node->word, word);
     // increment count
-    node->count ++;
+    node->count++;
     // add next and prev pointers, and set new node as tail
     node->prev = tail;
     tail->next = node;
@@ -58,12 +61,31 @@ void addToEnd(const char *word) {
     printf("Added : %s\n", tail->word);
 }
 
-void add(const char* word) {
+void add(const char *word) {
+    // handling for 1st node
+    Node *node = head;
+    if (node->word == NULL) {
+        addToBeginning(word);
+        return;
+    }
+    // linear search for word
+    // FIXME: adds 1st element twice
+    while (node != NULL && node != node->next) {
+        if (strcmp(node->word, word) == 0) {
+            // increment word count
+            node->count++;
+            printf("incremented : %s\n", node->word);
+//         addToMiddle(word, node);
+         return;
+        }
+        node = node->next;
+    }
     // add as last element
     addToEnd(word);
 }
+
 void printList() {
-    Node* node = head;
+    Node *node = head;
     while (node != NULL) {
         printf("%s : %d\n", node->word, node->count);
         node = node->next;
@@ -87,8 +109,7 @@ int main() {
     char line[1000];
     while (fgets(line, sizeof(line), fp))
         readToList(line);
-    fclose(fp);
     printList();
-
+    fclose(fp);
     return 0;
 }
