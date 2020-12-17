@@ -1,4 +1,3 @@
-#include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,8 +23,6 @@ Node *getNode() {
 }
 
 void addToMiddle(char *word, Node *node) {
-    // word: word to add
-    // node: node to be added in front of
 
     // create node and populate it
     Node *newNode = getNode();
@@ -87,7 +84,6 @@ int main() {
     while (fgets(line, sizeof(line), fp))
         readToList(line, iter);
     fclose(fp);
-    getch();
 
     return 0;
 }
