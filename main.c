@@ -33,7 +33,11 @@ void extract(Node *node) {
 void insert(Node *node1, Node *node2) {
     // node1: node to be inserted behind node2
     // node2: node to be in front of node1
-    node2->prev->next = node1;
+    if (node2 != head) {
+        node2->prev->next = node1;
+    } else {
+        head = node1;
+    }
     node1->prev = node2->prev;
 
     node1->next = node2;
@@ -44,6 +48,7 @@ void addToMiddle(Node *node) {
 
     // increment word count
     node->count++;
+    printf("Incremented %s\n", node->word);
     Node *tmp = node->prev;
     // if the node is the head then don't do anything. It is a 2 element list
     if (node == head) {
@@ -52,7 +57,11 @@ void addToMiddle(Node *node) {
     // iterate if tmp's count is lower than node's
     while (tmp->count < node->count) {
         // if tmp's previous node's count is larger than or equal to node's count
-        if (tmp->prev->count >= node->count) {
+        if (tmp->prev == NULL) {
+            extract(node); // remove node from where it was, while connecting it's previous and next elements
+            insert(node, tmp); // insert node behind tmp
+            break;
+        } else if (tmp->prev->count >= node->count) {
             extract(node); // remove node from where it was, while connecting it's previous and next elements
             insert(node, tmp); // insert node behind tmp
             break;
@@ -72,7 +81,7 @@ void addToBeginning(const char *word) {
     // increment count and add tail pointer
     head->count++;
     head->next = tail;
-//    printf("Added : %s\n", head->word);
+    printf("Added : %s\n", head->word);
 }
 
 void addToEnd(const char *word) {
@@ -87,7 +96,7 @@ void addToEnd(const char *word) {
     node->prev = tail;
     tail->next = node;
     tail = node;
-//    printf("Added : %s\n", tail->word);
+    printf("Added : %s\n", tail->word);
 }
 
 bool searchAndAdd(const char *word) {
@@ -155,7 +164,7 @@ int main() {
     head = getNode();
     tail = head;
     FILE *fp = fopen("input.txt", "r");
-    char line[1000];
+    char line[10000];
     while (fgets(line, sizeof(line), fp))
         readToList(line);
     fclose(fp);
