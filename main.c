@@ -130,6 +130,8 @@ void printList() {
 
 void readToList(char *line) {
     char *word = NULL;
+    // FIXME: wordun sonunda yeni satir varsa cikar
+
     word = strtok(line, " ");
     while (word != NULL) {
         add(word);
