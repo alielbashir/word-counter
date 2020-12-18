@@ -129,9 +129,9 @@ void printList() {
 }
 
 void readToList(char *line) {
+    // replace trailing newline with null character
+    line[strlen(line) - 1] = '\0';
     char *word = NULL;
-    // FIXME: wordun sonunda yeni satir varsa cikar
-
     word = strtok(line, " ");
     while (word != NULL) {
         add(word);
