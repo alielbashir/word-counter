@@ -3,10 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-// TODO:
-//  1. remove tail. More cons than pros
-//  2. free all resources
-//  3. fix newline parsing
 struct List {
     char *word;
     int count;
@@ -18,7 +14,7 @@ Node *head; // first node
 Node *tail; // last node
 
 Node *getNode() {
-    Node *node = (Node *) malloc(sizeof(Node));
+    Node *node = malloc(sizeof(Node));
     node->word = NULL;
     node->count = 0;
     node->next = NULL;
@@ -63,7 +59,7 @@ void addToMiddle(Node *node) {
         }
         tmp = tmp->prev;
     }
-    printf("incremented : %s\n", node->word);
+//    printf("incremented : %s\n", node->word);
 
 }
 
@@ -76,7 +72,7 @@ void addToBeginning(const char *word) {
     // increment count and add tail pointer
     head->count++;
     head->next = tail;
-    printf("Added : %s\n", head->word);
+//    printf("Added : %s\n", head->word);
 }
 
 void addToEnd(const char *word) {
@@ -91,7 +87,7 @@ void addToEnd(const char *word) {
     node->prev = tail;
     tail->next = node;
     tail = node;
-    printf("Added : %s\n", tail->word);
+//    printf("Added : %s\n", tail->word);
 }
 
 bool searchAndAdd(const char *word) {
@@ -113,8 +109,6 @@ bool searchAndAdd(const char *word) {
 }
 
 void add(const char *word) {
-    // TODO: clean up logic
-
     // handling for 1st node
     if (head->word == NULL) {
         addToBeginning(word);
@@ -143,6 +137,17 @@ void readToList(char *line) {
     }
 }
 
+void destroyList() {
+    // free all nodes in the list
+    Node *node = head;
+    Node *tmp;
+    while (node != NULL) {
+        tmp = node->next;
+        free(node->word);
+        free(node);
+        node = tmp;
+    }
+}
 
 int main() {
     head = getNode();
@@ -151,7 +156,8 @@ int main() {
     char line[1000];
     while (fgets(line, sizeof(line), fp))
         readToList(line);
-    printList();
     fclose(fp);
+    printList();
+    destroyList();
     return 0;
 }
