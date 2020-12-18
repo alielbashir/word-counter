@@ -48,7 +48,7 @@ void addToMiddle(Node *node) {
 
     // increment word count
     node->count++;
-    printf("Incremented %s\n", node->word);
+//    printf("Incremented %s\n", node->word);
     Node *tmp = node->prev;
     // if the node is the head then don't do anything. It is a 2 element list
     if (node == head) {
@@ -56,7 +56,7 @@ void addToMiddle(Node *node) {
     }
     // iterate if tmp's count is lower than node's
     while (tmp->count < node->count) {
-        // if tmp's previous node's count is larger than or equal to node's count
+        // if tmp's previous node is null i.e. tmp is head. This is done to prevent
         if (tmp->prev == NULL) {
             extract(node); // remove node from where it was, while connecting it's previous and next elements
             insert(node, tmp); // insert node behind tmp
@@ -68,7 +68,6 @@ void addToMiddle(Node *node) {
         }
         tmp = tmp->prev;
     }
-//    printf("incremented : %s\n", node->word);
 
 }
 
@@ -81,7 +80,7 @@ void addToBeginning(const char *word) {
     // increment count and add tail pointer
     head->count++;
     head->next = tail;
-    printf("Added : %s\n", head->word);
+//    printf("Added : %s\n", head->word);
 }
 
 void addToEnd(const char *word) {
@@ -96,7 +95,7 @@ void addToEnd(const char *word) {
     node->prev = tail;
     tail->next = node;
     tail = node;
-    printf("Added : %s\n", tail->word);
+//    printf("Added : %s\n", tail->word);
 }
 
 bool searchAndAdd(const char *word) {
