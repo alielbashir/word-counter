@@ -6,146 +6,32 @@
 struct List {
     char *word;
     int count;
-    struct List *next, *prev;
+    struct List *next;
 
 };
 typedef struct List Node;
 Node *head; // first node
 Node *tail; // last node
 
-Node *getNode() {
+Node *getNode(const char *word, int count) {
     Node *node = malloc(sizeof(Node));
-    node->word = NULL;
-    node->count = 0;
-    node->next = NULL;
-    node->prev = NULL;
-    return node;
-}
-
-void extract(Node *node) {
-    // removes node from current position, connecting its previous and next elements
-    node->prev->next = node->next;
-    node->next->prev = node->prev;
-    node->next = NULL;
-    node->prev = NULL;
-}
-
-void insert(Node *node1, Node *node2) {
-    // node1: node to be inserted behind node2
-    // node2: node to be in front of node1
-    if (node2 != head) {
-        node2->prev->next = node1;
-    } else {
-        head = node1;
-    }
-    node1->prev = node2->prev;
-
-    node1->next = node2;
-    node2->prev = node1;
-}
-
-void addToMiddle(Node *node) {
-
-    // increment word count
-    node->count++;
-//    printf("Incremented %s\n", node->word);
-    Node *tmp = node->prev;
-    // if the node is the head then don't do anything. It is a 2 element list
-    if (node == head) {
-        return;
-    }
-    // iterate if tmp's count is lower than node's
-    while (tmp->count < node->count) {
-        // if tmp's previous node is null i.e. tmp is head. This is done to prevent
-        if (tmp->prev == NULL) {
-            extract(node); // remove node from where it was, while connecting it's previous and next elements
-            insert(node, tmp); // insert node behind tmp
-            break;
-        } else if (tmp->prev->count >= node->count) {
-            extract(node); // remove node from where it was, while connecting it's previous and next elements
-            insert(node, tmp); // insert node behind tmp
-            break;
-        }
-        tmp = tmp->prev;
-    }
-
-}
-
-
-void addToBeginning(const char *word) {
-
-    // allocate space for word and copy it
-    head->word = malloc(strlen(word) + 1);
-    strcpy(head->word, word);
-    // increment count and add tail pointer
-    head->count++;
-    head->next = tail;
-//    printf("Added : %s\n", head->word);
-}
-
-void addToEnd(const char *word) {
-
-    // create and populate new node
-    Node *node = getNode();
     node->word = malloc(strlen(word) + 1);
     strcpy(node->word, word);
-    // increment count
-    node->count++;
-    // add next and prev pointers, and set new node as tail
-    node->prev = tail;
-    tail->next = node;
-    tail = node;
-//    printf("Added : %s\n", tail->word);
-}
-
-bool searchAndAdd(const char *word) {
-    Node *node = head;
-    bool b = false;
-    // linear search for word
-    while (node != NULL) {
-        // if found
-        if (strcmp(node->word, word) == 0) {
-            addToMiddle(node);
-            return b = true;
-        }
-        if (node == node->next) {
-            break;
-        }
-        node = node->next;
-    }
-    return b;
-}
-
-void add(const char *word) {
-    // handling for 1st node
-    if (head->word == NULL) {
-        addToBeginning(word);
-    } else if (searchAndAdd(word)) {
-        // do nothing, function side effects handle that
-    } else {
-        // add as last element
-        addToEnd(word);
-    }
+    node->count = count;
+    node->next = NULL;
+    return node;
 }
 
 void printList() {
     Node *node = head;
+    int i = 1;
     while (node != NULL) {
-        printf("%s : %d\n", node->word, node->count);
+        printf("%d. %s: %d\n", i, node->word, node->count);
         node = node->next;
+        i++;
     }
 }
 
-void readToList(char *line) {
-    // replace trailing newline with null character
-    line[strlen(line) - 1] = '\0';
-    char *word = NULL;
-    word = strtok(line, " ");
-    while (word != NULL) {
-        add(word);
-        word = strtok(NULL, " ");
-    }
-}
 
 void destroyList() {
     // free all nodes in the list
@@ -159,13 +45,105 @@ void destroyList() {
     }
 }
 
+
+int search(FILE *fp, long cur, const char *wordToSearch) {
+    // check if in list
+    Node *node = head;
+    // linear search for word
+    while (node != NULL) {
+        // if found return -1
+        if (strcmp(node->word, wordToSearch) == 0) {
+            return -1;
+        }
+        if (node == node->next) {
+            break;
+        }
+        node = node->next;
+    }
+    // if not in list count occurences in all of file
+    char word[1024];
+    int count = 0;
+    // go to file pointer
+    fseek(fp, (long) (cur - strlen(wordToSearch)), SEEK_SET);
+    while (fscanf(fp, "%s", word) != EOF) {
+        if (strcmp(word, wordToSearch) == 0)
+            count++;
+    }
+    return count;
+}
+
+void insertToMiddle(Node *node1, Node *node2) {
+    // node1: node to be behind node2
+    // node2: node to be inserted in front of node1
+    node2->next = node1->next;
+    node1->next = node2;
+//    printf("Added : %s\n", node2->word);
+
+}
+
+void prepend(Node *node) {
+    // adds node to beginning of list
+    node->next = head;
+    head = node;
+}
+
+void append(Node *node) {
+    // adds node to end of list
+    tail->next = node;
+    tail = node;
+}
+
+void searchAndInsert(Node *nodeToInsert) {
+
+    // optimizations for case of first or last node
+    // if very first node
+    if (head == NULL) {
+        prepend(nodeToInsert);
+        tail = head;
+        return;
+    }
+    // if count bigger than head
+    if (nodeToInsert->count > head->count) {
+        prepend(nodeToInsert);
+        return;
+    }
+    // if count lower than or equal to tail, or 2nd element to be added
+    if (nodeToInsert->count <= tail->count || tail == head) {
+        append(nodeToInsert);
+        return;
+    }
+
+    // searches for equivalent count and adds word to its end
+    Node *node = head;
+    while (node->next != NULL) {
+        if (node->next->count < nodeToInsert->count) {
+            insertToMiddle(node, nodeToInsert);
+            return;
+        }
+        node = node->next;
+    }
+}
+
+
 int main() {
-    head = getNode();
-    tail = head;
+    int count;
+    long cur;
     FILE *fp = fopen("input.txt", "r");
-    char line[10000];
-    while (fgets(line, sizeof(line), fp))
-        readToList(line);
+    char word[1024];
+    while (fscanf(fp, "%s", word) != EOF) {
+        cur = ftell(fp);
+        count = search(fp, cur, word);
+        // if found in file keep iterating
+        if (count == -1) {
+            continue;
+        } else {
+            Node *node = getNode(word, count);
+            searchAndInsert(node);
+        }
+        // set file pointer back to pointer at beginning of iteration
+        fseek(fp, cur, SEEK_SET);
+    }
+
     fclose(fp);
     printList();
     destroyList();
