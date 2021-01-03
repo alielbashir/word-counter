@@ -6,7 +6,6 @@ struct List {
     char *word;
     int count;
     struct List *next;
-
 };
 typedef struct List Node;
 Node *head; // first node
@@ -31,7 +30,6 @@ void printList() {
     }
 }
 
-
 void destroyList() {
     // free all nodes in the list
     Node *node = head;
@@ -44,15 +42,14 @@ void destroyList() {
     }
 }
 
-
-int search(FILE *fp, long cur, const char *wordToSearch) {
+int search(FILE *fp, long cur, const char *word) {
     // check if in list
     Node *node = head;
-    // linear search for word
+    // linear search for newWord
     while (node != NULL) {
         // if found return -1
-        if (strcmp(node->word, wordToSearch) == 0) {
-            return -1;
+        if (strcmp(node->word, word) == 0) {
+            return 0;
         }
         if (node == node->next) {
             break;
@@ -60,12 +57,12 @@ int search(FILE *fp, long cur, const char *wordToSearch) {
         node = node->next;
     }
     // if not in list count occurences in all of file
-    char word[1024];
+    char newWord[1024];
     int count = 0;
     // go to file pointer
-    fseek(fp, (long) (cur - strlen(wordToSearch)), SEEK_SET);
-    while (fscanf(fp, "%s", word) != EOF) {
-        if (strcmp(word, wordToSearch) == 0)
+    fseek(fp, (long) (cur - strlen(word)), SEEK_SET);
+    while (fscanf(fp, "%s", newWord) != EOF) {
+        if (strcmp(newWord, word) == 0)
             count++;
     }
     return count;
@@ -123,7 +120,6 @@ void searchAndInsert(Node *nodeToInsert) {
     }
 }
 
-
 int main() {
     int count;
     long cur;
@@ -133,16 +129,14 @@ int main() {
         cur = ftell(fp);
         count = search(fp, cur, word);
         // if found in file keep iterating
-        if (count == -1) {
-            continue;
-        } else {
+        if (count > 0) {
             Node *node = getNode(word, count);
             searchAndInsert(node);
         }
+
         // set file pointer back to pointer at beginning of iteration
         fseek(fp, cur, SEEK_SET);
     }
-
     fclose(fp);
     printList();
     destroyList();
