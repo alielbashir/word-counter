@@ -43,7 +43,7 @@ void destroyList() {
     }
 }
 
-int search(FILE *fp, long cur, const char *word) {
+int search(FILE *fp, const char *word) {
     // check if in list
     Node *node = head;
     // linear search for newWord
@@ -56,9 +56,8 @@ int search(FILE *fp, long cur, const char *word) {
     }
     // if not in list count occurences in all of file
     char newWord[MAX_WORD];
-    int count = 0;
-    // go to file pointer
-    fseek(fp, (long) (cur - strlen(word)), SEEK_SET);
+    int count = 1;
+
     while (fscanf(fp, "%s", newWord) != EOF) {
         if (strcmp(newWord, word) == 0)
             count++;
@@ -125,15 +124,13 @@ int main() {
     char word[MAX_WORD];
     while (fscanf(fp, "%s", word) != EOF) {
         cur = ftell(fp);
-        count = search(fp, cur, word);
-        // if found in file keep iterating
+        count = search(fp, word);
+
         if (count > 0) {
             Node *node = getNode(word, count);
             searchAndInsert(node);
             fseek(fp, cur, SEEK_SET);
         }
-
-        // set file pointer back to pointer at beginning of iteration
     }
     fclose(fp);
     printList();
