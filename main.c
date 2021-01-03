@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_WORD 1024
 struct List {
     char *word;
     int count;
@@ -51,13 +52,10 @@ int search(FILE *fp, long cur, const char *word) {
         if (strcmp(node->word, word) == 0) {
             return 0;
         }
-        if (node == node->next) {
-            break;
-        }
         node = node->next;
     }
     // if not in list count occurences in all of file
-    char newWord[1024];
+    char newWord[MAX_WORD];
     int count = 0;
     // go to file pointer
     fseek(fp, (long) (cur - strlen(word)), SEEK_SET);
@@ -124,7 +122,7 @@ int main() {
     int count;
     long cur;
     FILE *fp = fopen("input.txt", "r");
-    char word[1024];
+    char word[MAX_WORD];
     while (fscanf(fp, "%s", word) != EOF) {
         cur = ftell(fp);
         count = search(fp, cur, word);
@@ -132,10 +130,10 @@ int main() {
         if (count > 0) {
             Node *node = getNode(word, count);
             searchAndInsert(node);
+            fseek(fp, cur, SEEK_SET);
         }
 
         // set file pointer back to pointer at beginning of iteration
-        fseek(fp, cur, SEEK_SET);
     }
     fclose(fp);
     printList();
