@@ -65,13 +65,11 @@ int search(FILE *fp, const char *word) {
     return count;
 }
 
-void insertToMiddle(Node *node1, Node *node2) {
+void insert(Node *node1, Node *node2) {
     // node1: node to be behind node2
     // node2: node to be inserted in front of node1
     node2->next = node1->next;
     node1->next = node2;
-//    printf("Added : %s\n", node2->word);
-
 }
 
 void prepend(Node *node) {
@@ -86,34 +84,35 @@ void append(Node *node) {
     tail = node;
 }
 
-void searchAndInsert(Node *nodeToInsert) {
+void searchAndInsert(Node *node) {
 
     // optimizations for case of first or last node
-    // if very first node
-    if (head == NULL) {
-        prepend(nodeToInsert);
-        tail = head;
-        return;
-    }
-    // if count bigger than head
-    if (nodeToInsert->count > head->count) {
-        prepend(nodeToInsert);
-        return;
-    }
-    // if count lower than or equal to tail, or 2nd element to be added
-    if (nodeToInsert->count <= tail->count || tail == head) {
-        append(nodeToInsert);
-        return;
+    {
+        if (head == NULL) {
+            prepend(node);
+            tail = head;
+            return;
+        }
+
+        if (node->count > head->count) {
+            prepend(node);
+            return;
+        }
+
+        if (node->count <= tail->count || tail == head) {
+            append(node);
+            return;
+        }
     }
 
     // searches for equivalent count and adds word to its end
-    Node *node = head;
-    while (node->next != NULL) {
-        if (node->next->count < nodeToInsert->count) {
-            insertToMiddle(node, nodeToInsert);
+    Node *tmpNode = head;
+    while (tmpNode->next != NULL) {
+        if (tmpNode->next->count < node->count) {
+            insert(tmpNode, node);
             return;
         }
-        node = node->next;
+        tmpNode = tmpNode->next;
     }
 }
 
