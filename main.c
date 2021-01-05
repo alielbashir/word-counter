@@ -44,11 +44,9 @@ void destroyList() {
 }
 
 int search(FILE *fp, const char *word) {
-    // check if in list
     Node *node = head;
     // linear search for newWord
     while (node != NULL) {
-        // if found return -1
         if (strcmp(node->word, word) == 0) {
             return 0;
         }
@@ -105,7 +103,6 @@ void searchAndInsert(Node *node) {
         }
     }
 
-    // searches for equivalent count and adds word to its end
     Node *tmpNode = head;
     while (tmpNode->next != NULL) {
         if (tmpNode->next->count < node->count) {
@@ -118,20 +115,22 @@ void searchAndInsert(Node *node) {
 
 int main() {
     int count;
-    long cur;
-    FILE *fp = fopen("input.txt", "r");
+    long cursor;
     char word[MAX_WORD];
+
+    FILE *fp = fopen("input.txt", "r");
     while (fscanf(fp, "%s", word) != EOF) {
-        cur = ftell(fp);
+        cursor = ftell(fp);
         count = search(fp, word);
 
         if (count > 0) {
             Node *node = getNode(word, count);
             searchAndInsert(node);
-            fseek(fp, cur, SEEK_SET);
+            fseek(fp, cursor, SEEK_SET);
         }
     }
     fclose(fp);
+
     printList();
     destroyList();
     return 0;
